@@ -114,6 +114,7 @@ public class CartServiceImpl implements ICartService {
                 cartProductVo.setProductId(cartItem.getProductId());
 
                 Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
+                System.out.println(product);
                 if (product != null) {
                     cartProductVo.setProductMainImage(product.getMainImage());
                     cartProductVo.setProductName(product.getName());
@@ -128,6 +129,7 @@ public class CartServiceImpl implements ICartService {
                         buyLimitCount = cartItem.getQuantity();
                         cartProductVo.setLimitQuantity(Const.Cart.LIMIT_NUM_SUCCESS);
                     } else {
+                        //库存不足就设置数量为最大的数量
                         buyLimitCount = product.getStock();
                         cartProductVo.setLimitQuantity(Const.Cart.LIMIT_NUM_FAIL);
                         //购物车中更新有效库存
@@ -140,13 +142,14 @@ public class CartServiceImpl implements ICartService {
                     //计算总价
                     cartProductVo.setProductTotalPrice(BigDecimalUtil.mul(product.getPrice().doubleValue(), cartProductVo.getQuantity()));
                     cartProductVo.setProductChecked(cartItem.getChecked());
+                    if (cartItem.getChecked() == Const.Cart.CHECKED) {
+                        //如果已经勾选,增加到整个的购物车总价中
+                        cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(), cartProductVo.getProductTotalPrice().doubleValue());
+                    }
+                    cartProductVoList.add(cartProductVo);
+
                 }
 
-                if (cartItem.getChecked() == Const.Cart.CHECKED) {
-                    //如果已经勾选,增加到整个的购物车总价中
-                    cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(), cartProductVo.getProductTotalPrice().doubleValue());
-                }
-                cartProductVoList.add(cartProductVo);
             }
         }
         cartVo.setCartTotalPrice(cartTotalPrice);
