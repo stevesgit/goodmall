@@ -59,13 +59,5 @@ public class SmallTest implements Serializable {
         System.out.println(a == b);
     }
 
-    @Test
-    public void test5() {
-        //NullPointerException on unboxing
-        //拆箱遇到空指针错误 因为这个原本为null
-        System.out.println(number);
-        if (number < 3) {
-            System.out.println("success");
-        }
-    }
+
 }
